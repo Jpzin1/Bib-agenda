@@ -1,0 +1,33 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  padding: 24px;
+  background-color: var(--background-gray);
+  flex: 1;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.sidebar-active {
+  margin-left: 220px; /* Largura da sidebar */
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .main-content.sidebar-active {
+    margin-left: 0;
+  }
+  
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,57 @@
+:root {
+  --primary-purple: #4A0D67;
+  --primary-pink: #E91E63;
+  --background-gray: #F5F5F5;
+  --white: #FFFFFF;
+  --status-available: #4CAF50;
+  --status-occupied: #F44336;
+  --status-reserved: #2196F3;
+  --status-unavailable: #FF9800;
+  --text-dark: #333333;
+  --text-light: #757575;
+  --border-light: #E0E0E0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-purple);
+  color: var(--white);
+  height: 56px;
+  padding: 0 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  margin-right: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.menu-button, .icon-button, .profile-button {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 20px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-left: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
