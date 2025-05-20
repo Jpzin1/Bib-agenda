@@ -5,9 +5,17 @@ interface RoomCardProps {
   roomNumber: number;
   capacity: number;
   status: string;
+  onReserve?: () => void;
+  onEnterQueue?: () => void;
 }
 
-const RoomCard: React.FC<RoomCardProps> = ({ roomNumber, capacity, status }) => {
+const RoomCard: React.FC<RoomCardProps> = ({ 
+  roomNumber, 
+  capacity, 
+  status,
+  onReserve,
+  onEnterQueue
+}) => {
   // Função para obter o texto do status
   const getStatusText = (status: string) => {
     switch (status) {
@@ -16,9 +24,25 @@ const RoomCard: React.FC<RoomCardProps> = ({ roomNumber, capacity, status }) => 
       case 'occupied':
         return 'Ocupado';
       case 'reserved':
-        return 'Reservado';
+        return 'Sua Reserva';
       case 'unavailable':
         return 'Indisponível';
+      default:
+        return '';
+    }
+  };
+
+  // Função para obter a classe CSS baseada no status
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case 'available':
+        return 'status-available';
+      case 'occupied':
+        return 'status-occupied';
+      case 'reserved':
+        return 'status-reserved';
+      case 'unavailable':
+        return 'status-unavailable';
       default:
         return '';
     }
@@ -31,16 +55,16 @@ const RoomCard: React.FC<RoomCardProps> = ({ roomNumber, capacity, status }) => 
       </div>
       <div className="room-details">
         <h2 className="room-title">SALA {roomNumber}</h2>
-        <p className="room-capacity">Capacidade da sala: {capacity} pessoas (mesa)</p>
+        <p className="room-capacity">Capacidade da sala: {capacity} pessoas (máx)</p>
         <div className="room-status-container">
           <span>Status: </span>
-          <span className={`room-status-text status-${status}`}>
+          <span className={`room-status-text ${getStatusClass(status)}`}>
             {getStatusText(status)}
           </span>
         </div>
         <div className="room-actions">
-          <button>Reservar</button>
-          <button>Entrar na fila</button>
+          <button onClick={onReserve}>Reservar</button>
+          <button onClick={onEnterQueue}>Entrar na fila</button>
         </div>
       </div>
     </div>

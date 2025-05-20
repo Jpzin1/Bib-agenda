@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Sidebar.css';
+import SidebarModal from './SideBarModal';
 
 // Componentes de ícones SVG
 const ListIcon = () => (
@@ -27,12 +28,89 @@ const PencilIcon = () => (
   </svg>
 );
 
+// Tipos de modais
+type ModalType = 'waitingList' | 'history' | 'blocks' | 'reservations' | null;
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
+
+  const handleModalOpen = (modalType: ModalType) => {
+    setActiveModal(modalType);
+  };
+
+  const handleModalClose = () => {
+    setActiveModal(null);
+  };
+
+  // Renderiza o conteúdo do modal de Lista de Espera
+  const renderWaitingListContent = () => (
+    <>
+      <div className="waiting-list-item">
+        <div className="waiting-list-name">JOÃO FELIPE</div>
+        <div className="waiting-list-room">Sala 1</div>
+      </div>
+      <div className="waiting-list-item">
+        <div className="waiting-list-name">AMANDA</div>
+        <div className="waiting-list-room">Sala 1</div>
+      </div>
+      <div className="waiting-list-item your-position">
+        <div className="waiting-list-name">SUA POSIÇÃO</div>
+        <div className="waiting-list-room">Sala 1</div>
+      </div>
+      <div className="waiting-list-item">
+        <div className="waiting-list-name">EMANUEL</div>
+        <div className="waiting-list-room">Sala 2</div>
+      </div>
+      <div className="waiting-list-item">
+        <div className="waiting-list-name">VITÓRIA</div>
+        <div className="waiting-list-room">Sala 2</div>
+      </div>
+    </>
+  );
+
+  // Renderiza o conteúdo do modal de Histórico
+  const renderHistoryContent = () => (
+    <>
+      <div className="history-item">
+        <div className="history-date">16 / 01 / 2023 - 16:30</div>
+      </div>
+      <div className="history-item">
+        <div className="history-date">16 / 02 / 2023</div>
+      </div>
+      <div className="history-item">
+        <div className="history-date">20 / 03 / 2023</div>
+      </div>
+      <div className="history-item">
+        <div className="history-date">25 / 04 / 2024</div>
+      </div>
+      <div className="history-item">
+        <div className="history-date">30 / 04 / 2024</div>
+      </div>
+    </>
+  );
+
+  // Renderiza o conteúdo do modal de Bloqueios
+  const renderBlocksContent = () => (
+    <div className="block-message">
+      VOCÊ FOI BLOQUEADO POR NÃO TER UTILIZADO A SALA DE ESTUDO.
+    </div>
+  );
+
+  // Renderiza o conteúdo do modal de Suas Reservas
+  const renderReservationsContent = () => (
+    <>
+      <div className="reservation-item">
+        <div className="reservation-room">Você Reservou a Sala 2 com</div>
+        <div className="reservation-time">Sucesso</div>
+      </div>
+    </>
+  );
+
   return (
     <>
       {/* Overlay para fechar a sidebar ao clicar fora */}
@@ -41,25 +119,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       <div className={`sidebar ${isOpen ? 'active' : ''}`}>
         <nav className="sidebar-nav">
           <ul className="sidebar-menu">
-            <li className="sidebar-item">
+            <li className="sidebar-item" onClick={() => handleModalOpen('waitingList')}>
               <div className="sidebar-icon">
                 <ListIcon />
               </div>
               <span className="sidebar-text">LISTA DE ESPERA</span>
             </li>
-            <li className="sidebar-item">
+            <li className="sidebar-item" onClick={() => handleModalOpen('history')}>
               <div className="sidebar-icon">
                 <HistoryIcon />
               </div>
               <span className="sidebar-text">HISTÓRICO</span>
             </li>
-            <li className="sidebar-item">
+            <li className="sidebar-item" onClick={() => handleModalOpen('blocks')}>
               <div className="sidebar-icon">
                 <LockIcon />
               </div>
               <span className="sidebar-text">BLOQUEIOS</span>
             </li>
-            <li className="sidebar-item">
+            <li className="sidebar-item" onClick={() => handleModalOpen('reservations')}>
               <div className="sidebar-icon">
                 <PencilIcon />
               </div>
@@ -68,6 +146,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </ul>
         </nav>
       </div>
+
+      {/* Modais */}
+      {activeModal === 'waitingList' && (
+        <SidebarModal title="Lista de Espera" onClose={handleModalClose}>
+          {renderWaitingListContent()}
+        </SidebarModal>
+      )}
+      
+      {activeModal === 'history' && (
+        <SidebarModal title="Histórico" onClose={handleModalClose}>
+          {renderHistoryContent()}
+        </SidebarModal>
+      )}
+      
+      {activeModal === 'blocks' && (
+        <SidebarModal title="Bloqueios" onClose={handleModalClose}>
+          {renderBlocksContent()}
+        </SidebarModal>
+      )}
+      
+      {activeModal === 'reservations' && (
+        <SidebarModal title="Suas Reservas" onClose={handleModalClose}>
+          {renderReservationsContent()}
+        </SidebarModal>
+      )}
     </>
   );
 };

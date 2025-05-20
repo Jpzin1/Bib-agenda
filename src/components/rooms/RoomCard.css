@@ -1,18 +1,22 @@
 .room-card {
   background-color: var(--white);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .room-image {
   width: 100%;
-  height: 200px;
+  height: 150px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f0f0f0;
+  position: relative;
 }
 
 .room-image img {
@@ -21,19 +25,30 @@
   object-fit: cover;
 }
 
+.room-image::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #E0E0E0;
+}
+
 .room-details {
   padding: 16px;
 }
 
 .room-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   margin-bottom: 8px;
+  color: #333333;
 }
 
 .room-capacity {
   font-size: 14px;
-  color: var(--text-dark);
+  color: #666666;
   margin-bottom: 8px;
 }
 
@@ -53,25 +68,38 @@
   color: #4CAF50;
 }
 
+.room-status-text.status-occupied {
+  color: #F44336;
+}
+
+.room-status-text.status-reserved {
+  color: #2196F3;
+}
+
+.room-status-text.status-unavailable {
+  color: #FF9800;
+}
+
 .room-actions {
   display: flex;
   justify-content: space-between;
   gap: 16px;
+  margin-top: 20px;
 }
 
 .room-actions button {
   flex: 1;
-  padding: 12px 0;
+  padding: 10px 0;
   font-size: 14px;
-  font-weight: 500;
-  background-color: #E91E63;
+  font-weight: 400;
+  background: linear-gradient(to right, #E91E63, #D81B60);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: opacity 0.2s;
 }
 
 .room-actions button:hover {
-  background-color: #D81B60;
+  opacity: 0.9;
 }

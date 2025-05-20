@@ -10,9 +10,11 @@ interface Room {
 interface RoomModalProps {
   room: Room;
   onClose: () => void;
+  onReserve?: () => void;
+  onEnterQueue?: () => void;
 }
 
-const RoomModal: React.FC<RoomModalProps> = ({ room, onClose }) => {
+const RoomModal: React.FC<RoomModalProps> = ({ room, onClose, onReserve, onEnterQueue }) => {
   // Função para obter o texto do status
   const getStatusText = (status: string) => {
     switch (status) {
@@ -21,7 +23,7 @@ const RoomModal: React.FC<RoomModalProps> = ({ room, onClose }) => {
       case 'occupied':
         return 'Ocupado';
       case 'reserved':
-        return 'Reservado';
+        return 'Sua Reserva';
       case 'unavailable':
         return 'Indisponível';
       default:
@@ -53,7 +55,7 @@ const RoomModal: React.FC<RoomModalProps> = ({ room, onClose }) => {
         </div>
         <div className="room-details">
           <h2 className="room-title">SALA {room.id}</h2>
-          <p className="room-capacity">Capacidade da sala: {room.capacity} pessoas (mesa)</p>
+          <p className="room-capacity">Capacidade da sala: {room.capacity} pessoas (máx)</p>
           <div className="room-status-container">
             <span>Status: </span>
             <span className={`room-status-text ${getStatusClass(room.status)}`}>
@@ -61,8 +63,8 @@ const RoomModal: React.FC<RoomModalProps> = ({ room, onClose }) => {
             </span>
           </div>
           <div className="room-actions">
-            <button>Reservar</button>
-            <button>Entrar na fila</button>
+            <button onClick={onReserve}>Reservar</button>
+            <button onClick={onEnterQueue}>Entrar na fila</button>
           </div>
         </div>
       </div>
