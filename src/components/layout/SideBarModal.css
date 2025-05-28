@@ -1,155 +1,103 @@
-.modal-overlay {
+.sidebar-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 1000;
+  align-items: center;
+  z-index: 1100;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .sidebar-modal {
-  background-color: #FFFFFF;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   width: 90%;
-  max-width: 400px;
-  animation: modal-appear 0.3s ease-out;
-  position: relative;
-}
-
-@keyframes modal-appear {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid #E0E0E0;
-}
-
-.modal-subtitle {
-  font-size: 12px;
-  color: #757575;
-  margin-bottom: 4px;
+  background-color: #4A0D67;
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .sidebar-modal-title {
-  font-size: 16px;
-  font-weight: 500;
   margin: 0;
-  color: #333333;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.sidebar-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-modal-content {
-  padding: 0;
-  max-height: 70vh;
+  padding: 20px;
   overflow-y: auto;
 }
 
-/* Barra lateral azul para o modal */
-.sidebar-modal::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: #2196F3;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Estilos específicos para Lista de Espera */
-.waiting-list-item {
-  padding: 12px 20px;
-  border-bottom: 1px solid #E0E0E0;
-  display: flex;
-  flex-direction: column;
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.waiting-list-item:last-child {
-  border-bottom: none;
+/* Responsividade */
+@media (max-width: 768px) {
+  .sidebar-modal {
+    width: 95%;
+    max-width: 400px;
+  }
 }
 
-.waiting-list-name {
-  font-weight: 500;
-  color: #333333;
-  margin-bottom: 2px;
-}
-
-.waiting-list-room {
-  font-size: 12px;
-  color: #757575;
-}
-
-.waiting-list-item.your-position .waiting-list-name {
-  color: #2196F3;
-}
-
-/* Estilos específicos para Histórico */
-.history-item {
-  padding: 10px 20px;
-  border-bottom: 1px solid #E0E0E0;
-}
-
-.history-item:last-child {
-  border-bottom: none;
-}
-
-.history-date {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-/* Estilos específicos para Bloqueios */
-.block-message {
-  padding: 16px 20px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #333333;
-}
-
-/* Estilos específicos para Suas Reservas */
-.reservation-item {
-  padding: 12px 20px;
-  border-bottom: 1px solid #E0E0E0;
-  display: flex;
-  flex-direction: column;
-}
-
-.reservation-item:last-child {
-  border-bottom: none;
-}
-
-.reservation-room {
-  font-weight: 400;
-  margin-bottom: 4px;
-}
-
-.reservation-time {
-  font-size: 14px;
-  color: #757575;
-}
-
-/* Estilo para o botão de entrar na fila */
-.modal-button {
-  background-color: #E91E63;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-top: 16px;
-  align-self: flex-end;
+@media (max-width: 480px) {
+  .sidebar-modal {
+    width: 95%;
+    max-height: 80vh;
+  }
+  
+  .sidebar-modal-header {
+    padding: 12px 16px;
+  }
+  
+  .sidebar-modal-content {
+    padding: 16px;
+  }
 }

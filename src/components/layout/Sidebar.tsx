@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 import SidebarModal from './SideBarModal';
+import { getUserQueueEntries, getUserReservations, QueueEntry, Reservation, leaveQueue } from '../../lib/supabase';
 
 // Componentes de ícones SVG
 const ListIcon = () => (
@@ -38,78 +39,217 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [queueEntries, setQueueEntries] = useState<QueueEntry[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [leavingQueue, setLeavingQueue] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
+  // Usuário simulado - em uma aplicação real, isso viria de um sistema de autenticação
+  const userId = "user-1";
+
+  // Buscar dados da fila quando o modal de lista de espera for aberto
+  useEffect(() => {
+    if (activeModal === 'waitingList') {
+      fetchQueueEntries();
+    } else if (activeModal === 'reservations') {
+      fetchReservations();
+    }
+  }, [activeModal]);
+
+  const fetchQueueEntries = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+    try {
+      const entries = await getUserQueueEntries(userId);
+      setQueueEntries(entries);
+    } catch (err) {
+      console.error('Erro ao buscar entradas na fila:', err);
+      setError('Não foi possível carregar suas entradas na fila.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchReservations = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userReservations = await getUserReservations(userId);
+      setReservations(userReservations);
+    } catch (err) {
+      console.error('Erro ao buscar reservas:', err);
+      setError('Não foi possível carregar suas reservas.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExitQueue = async (queueId: number) => {
+    setLeavingQueue(queueId);
+    setError(null);
+    setSuccessMessage(null);
+    
+    try {
+      const success = await leaveQueue(queueId);
+      
+      if (success) {
+        setSuccessMessage('Você saiu da fila com sucesso!');
+        // Atualiza a lista de filas removendo a entrada
+        setQueueEntries(prevEntries => prevEntries.filter(entry => entry.id !== queueId));
+        
+        // Limpa a mensagem de sucesso após 3 segundos
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
+      } else {
+        setError('Não foi possível sair da fila. Tente novamente.');
+      }
+    } catch (err) {
+      console.error('Erro ao sair da fila:', err);
+      setError('Ocorreu um erro ao processar sua solicitação.');
+    } finally {
+      setLeavingQueue(null);
+    }
+  };
 
   const handleModalOpen = (modalType: ModalType) => {
     setActiveModal(modalType);
+    setError(null);
+    setSuccessMessage(null);
   };
 
   const handleModalClose = () => {
     setActiveModal(null);
+    setError(null);
+    setSuccessMessage(null);
   };
 
   // Renderiza o conteúdo do modal de Lista de Espera
-  const renderWaitingListContent = () => (
-    <>
-      <div className="waiting-list-item">
-        <div className="waiting-list-name">JOÃO FELIPE</div>
-        <div className="waiting-list-room">Sala 1</div>
-      </div>
-      <div className="waiting-list-item">
-        <div className="waiting-list-name">AMANDA</div>
-        <div className="waiting-list-room">Sala 1</div>
-      </div>
-      <div className="waiting-list-item your-position">
-        <div className="waiting-list-name">SUA POSIÇÃO</div>
-        <div className="waiting-list-room">Sala 1</div>
-      </div>
-      <div className="waiting-list-item">
-        <div className="waiting-list-name">EMANUEL</div>
-        <div className="waiting-list-room">Sala 2</div>
-      </div>
-      <div className="waiting-list-item">
-        <div className="waiting-list-name">VITÓRIA</div>
-        <div className="waiting-list-room">Sala 2</div>
-      </div>
-    </>
-  );
+  const renderWaitingListContent = () => {
+    if (loading) {
+      return <div className="loading-message">Carregando lista de espera...</div>;
+    }
+    
+    if (error) {
+      return <div className="error-message">{error}</div>;
+    }
+    
+    if (successMessage) {
+      return <div className="success-message">{successMessage}</div>;
+    }
+    
+    if (queueEntries.length === 0) {
+      return <div className="empty-message">Você não está em nenhuma fila de espera no momento.</div>;
+    }
+    
+    return (
+      <>
+        {queueEntries.map((entry) => (
+          <div key={entry.id} className="waiting-list-item">
+            <div className="waiting-list-info">
+              <div className="waiting-list-name">
+                Posição {entry.position}
+              </div>
+              <div className="waiting-list-room">Sala {entry.room_id}</div>
+            </div>
+            <button 
+              className="exit-queue-button"
+              onClick={() => handleExitQueue(entry.id)}
+              disabled={leavingQueue === entry.id}
+            >
+              {leavingQueue === entry.id ? 'Saindo...' : 'Sair da fila'}
+            </button>
+          </div>
+        ))}
+      </>
+    );
+  };
 
   // Renderiza o conteúdo do modal de Histórico
-  const renderHistoryContent = () => (
-    <>
-      <div className="history-item">
-        <div className="history-date">16 / 01 / 2023 - 16:30</div>
-      </div>
-      <div className="history-item">
-        <div className="history-date">16 / 02 / 2023</div>
-      </div>
-      <div className="history-item">
-        <div className="history-date">20 / 03 / 2023</div>
-      </div>
-      <div className="history-item">
-        <div className="history-date">25 / 04 / 2024</div>
-      </div>
-      <div className="history-item">
-        <div className="history-date">30 / 04 / 2024</div>
-      </div>
-    </>
-  );
+  const renderHistoryContent = () => {
+    // Em uma implementação real, isso viria do banco de dados
+    const historyDates = [
+      '16 / 01 / 2023 - 16:30',
+      '16 / 02 / 2023',
+      '20 / 03 / 2023',
+      '25 / 04 / 2024',
+      '30 / 04 / 2024'
+    ];
+    
+    return (
+      <>
+        {historyDates.map((date, index) => (
+          <div key={index} className="history-item">
+            <div className="history-date">{date}</div>
+          </div>
+        ))}
+      </>
+    );
+  };
 
   // Renderiza o conteúdo do modal de Bloqueios
-  const renderBlocksContent = () => (
-    <div className="block-message">
-      VOCÊ FOI BLOQUEADO POR NÃO TER UTILIZADO A SALA DE ESTUDO.
-    </div>
-  );
+  const renderBlocksContent = () => {
+    // Verificar se o usuário tem bloqueios (simulado)
+    const hasBlocks = false;
+    
+    if (hasBlocks) {
+      return (
+        <div className="block-message">
+          VOCÊ FOI BLOQUEADO POR NÃO TER UTILIZADO A SALA DE ESTUDO.
+        </div>
+      );
+    } else {
+      return (
+        <div className="no-block-message">
+          Você não possui bloqueios ativos no momento.
+        </div>
+      );
+    }
+  };
 
   // Renderiza o conteúdo do modal de Suas Reservas
-  const renderReservationsContent = () => (
-    <>
-      <div className="reservation-item">
-        <div className="reservation-room">Você Reservou a Sala 2 com</div>
-        <div className="reservation-time">Sucesso</div>
-      </div>
-    </>
-  );
+  const renderReservationsContent = () => {
+    if (loading) {
+      return <div className="loading-message">Carregando suas reservas...</div>;
+    }
+    
+    if (error) {
+      return <div className="error-message">{error}</div>;
+    }
+    
+    if (reservations.length === 0) {
+      return <div className="empty-message">Você não possui reservas ativas no momento.</div>;
+    }
+    
+    return (
+      <>
+        {reservations.map((reservation) => {
+          const startTime = new Date(reservation.start_time);
+          const endTime = new Date(reservation.end_time);
+          
+          const formatDate = (date: Date) => {
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+          };
+          
+          return (
+            <div key={reservation.id} className="reservation-item">
+              <div className="reservation-room">Sala {reservation.room_id}</div>
+              <div className="reservation-time">
+                {formatDate(startTime)} - {formatDate(endTime)}
+              </div>
+              <div className="reservation-status">
+                {reservation.status === 'active' ? 'Ativa' : 
+                 reservation.status === 'completed' ? 'Concluída' : 'Cancelada'}
+              </div>
+            </div>
+          );
+        })}
+      </>
+    );
+  };
 
   return (
     <>

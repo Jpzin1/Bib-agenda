@@ -4,8 +4,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 900;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .sidebar {
@@ -14,10 +15,11 @@
   left: -250px;
   width: 250px;
   height: 100%;
-  background-color: #424242;
+  background-color: #333333;
   z-index: 1000;
   transition: left 0.3s ease;
   overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar.active {
@@ -40,11 +42,14 @@
   padding: 15px 20px;
   color: #E0E0E0;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
+  border-left: 4px solid transparent;
 }
 
 .sidebar-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #E91E63;
+  transform: translateX(2px);
 }
 
 .sidebar-icon {
@@ -56,16 +61,179 @@
 
 .sidebar-text {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.5px;
 }
 
 /* Estilos para os itens do sidebar quando ativos */
 .sidebar-item.active {
   background-color: rgba(255, 255, 255, 0.15);
+  border-left: 4px solid #E91E63;
 }
 
-/* Cursor pointer para indicar que os itens são clicáveis */
-.sidebar-item {
+/* Estilos para os itens da lista de espera */
+.waiting-list-item {
+  background-color: white;
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.waiting-list-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.waiting-list-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.waiting-list-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.waiting-list-room {
+  color: #666;
+  font-weight: 500;
+}
+
+.exit-queue-button {
+  background-color: #D50000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.exit-queue-button:hover {
+  background-color: #B71C1C;
+  transform: translateY(-1px);
+}
+
+.exit-queue-button:active {
+  transform: translateY(1px);
+}
+
+.exit-queue-button:disabled {
+  background-color: #E0E0E0;
+  color: #9E9E9E;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estilos para os itens de histórico */
+.history-item {
+  background-color: white;
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.history-date {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Estilos para mensagens de bloqueio */
+.block-message {
+  background-color: rgba(213, 0, 0, 0.1);
+  color: #D50000;
+  padding: 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid rgba(213, 0, 0, 0.3);
+}
+
+.no-block-message {
+  background-color: rgba(0, 200, 83, 0.1);
+  color: #00C853;
+  padding: 15px;
+  border-radius: 6px;
+  font-weight: 500;
+  text-align: center;
+  border: 1px solid rgba(0, 200, 83, 0.3);
+}
+
+/* Estilos para os itens de reserva */
+.reservation-item {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-room {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.reservation-time {
+  color: #666;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.reservation-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: rgba(41, 121, 255, 0.1);
+  color: #2979FF;
+  border: 1px solid rgba(41, 121, 255, 0.3);
+}
+
+/* Mensagens de estado */
+.loading-message, .empty-message, .error-message, .success-message {
+  padding: 15px;
+  border-radius: 6px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.loading-message {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #666;
+}
+
+.empty-message {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #666;
+  font-style: italic;
+}
+
+.error-message {
+  background-color: rgba(213, 0, 0, 0.1);
+  color: #D50000;
+  border: 1px solid rgba(213, 0, 0, 0.3);
+}
+
+.success-message {
+  background-color: rgba(0, 200, 83, 0.1);
+  color: #00C853;
+  border: 1px solid rgba(0, 200, 83, 0.3);
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

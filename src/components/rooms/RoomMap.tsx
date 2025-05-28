@@ -1,47 +1,21 @@
 import React, { useState } from 'react';
 import './RoomMap.css';
 import RoomModal from './RoomModal';
+import useRooms from '../../hooks/useRooms';
+import { Room } from '../../lib/supabase';
 
 interface RoomMapProps {
-  // Props podem ser expandidas conforme necessário
+  userId: string;
+  onSelectRoom?: (room: Room) => void;
 }
 
-interface Room {
-  id: number;
-  status: string;
-  capacity: number;
-}
-
-const RoomMap: React.FC<RoomMapProps> = () => {
+const RoomMap: React.FC<RoomMapProps> = ({ userId, onSelectRoom }) => {
   // Estado para controlar o modal
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [showModal, setShowModal] = useState(false);
-
-  // Dados simulados das salas
-  const rooms: Room[] = [
-    { id: 1, status: 'available', capacity: 4 },
-    { id: 2, status: 'occupied', capacity: 4 },
-    { id: 3, status: 'reserved', capacity: 6 },
-    { id: 4, status: 'available', capacity: 4 },
-    { id: 5, status: 'unavailable', capacity: 8 },
-    { id: 6, status: 'available', capacity: 4 },
-    { id: 7, status: 'available', capacity: 4 },
-    { id: 8, status: 'occupied', capacity: 6 },
-    { id: 9, status: 'available', capacity: 4 },
-    { id: 10, status: 'available', capacity: 4 },
-    { id: 11, status: 'occupied', capacity: 4 },
-    { id: 12, status: 'available', capacity: 6 },
-    { id: 13, status: 'occupied', capacity: 4 },
-    { id: 14, status: 'available', capacity: 4 },
-    { id: 15, status: 'available', capacity: 8 },
-    { id: 16, status: 'available', capacity: 4 },
-    { id: 17, status: 'occupied', capacity: 4 },
-    { id: 18, status: 'available', capacity: 6 },
-    { id: 19, status: 'available', capacity: 4 },
-    { id: 20, status: 'available', capacity: 4 },
-    { id: 21, status: 'occupied', capacity: 4 },
-    { id: 22, status: 'available', capacity: 6 },
-  ];
+  
+  // Usar o hook para buscar as salas do Supabase
+  const { rooms, loading, error } = useRooms();
 
   // Função para obter a classe CSS baseada no status
   const getStatusClass = (status: string) => {
@@ -63,12 +37,25 @@ const RoomMap: React.FC<RoomMapProps> = () => {
   const handleRoomClick = (room: Room) => {
     setSelectedRoom(room);
     setShowModal(true);
+    
+    // Se a função onSelectRoom foi passada, chama ela com a sala selecionada
+    if (onSelectRoom) {
+      onSelectRoom(room);
+    }
   };
 
   // Função para fechar o modal
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  if (loading) {
+    return <div className="loading">Carregando salas...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
 
   return (
     <div className="room-map-container">
@@ -109,6 +96,7 @@ const RoomMap: React.FC<RoomMapProps> = () => {
         <RoomModal 
           room={selectedRoom} 
           onClose={handleCloseModal} 
+          userId={userId}
         />
       )}
     </div>
